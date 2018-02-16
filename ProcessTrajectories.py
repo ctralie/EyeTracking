@@ -85,24 +85,24 @@ if __name__ == '__main__':
         plt.clf()
         plotAllXTrajectories(medk, doFillNaNs = True)
         plt.savefig("AllTrajectories_FilledIn.svg", bbox_inches = 'tight')
-    (Xs, scores) = getAllTrajectories(medk, doFillNaNs = False, trange = [1500, 1900])
+    (Xs, scores) = getAllTrajectories(medk, doFillNaNs = False, trange = [3800, 4600])
 
     #Compute persistence diagrams and sum over persistence images
     AllPersistences = np.zeros(len(scores))
-    #Put the histogram bins between 0 and 2, because a critical point
-    #with more than persistence 2 is not the type of noise we're looking for
-    maxPers = 3
+    #Maximum persistence to consider (if -1, consider all persistences)
+    maxPers = -1
     res = 0.1 #Resolution of persistence image
     for i, x in enumerate(Xs):
         print("Computing DGM %i..."%i)
+        #Sum persistences going up and down
         (MT, PS, I) = mergeTreeFrom1DTimeSeries(x)
-        xmin = np.min(I[:, 0])
-        xmax = np.max(I[:, 1])
-        res = getPersistenceImage(I, [xmin, xmax, 0, maxPers*2], 0.1)
-        Im = res['PI']
-        N = int(Im.shape[0]/2)
-        Im = Im[0:N, :]
-        AllPersistences[i] = np.sum(Im)
+        persup = I[:, 1]-I[:, 0]
+        (MT, PS, I) = mergeTreeFrom1DTimeSeries(-x)
+        persdown = I[:, 1]-I[:, 0]
+        pers = np.array(persup.tolist() + persdown.tolist())
+        if maxPers > -1:
+            pers = pers[pers <= maxPers]
+        AllPersistences[i] = np.sum(pers)
     
     #Now re-sort the signals by the Fiedler vector of the graph
     #Laplacian built over Euclidean distance between the histograms

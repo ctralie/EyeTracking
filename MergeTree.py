@@ -72,12 +72,13 @@ def UFUnion(UFP, u, v, idxorder):
         [ufirst, usecond] = [v, u]
     UFP[usecond] = ufirst
 
-def mergeTreeFrom1DTimeSeries(x):
+def mergeTreeFrom1DTimeSeries(x, essentialClass = False):
     """
     Uses union find to make a merge tree object from the time series x
     (NOTE: This code is pretty general and could work to create merge trees
     on any domain if the neighbor set was updated)
     :param x: 1D array representing the time series
+    :param essentialClass: Whether to include the essential class
     :return: (Merge Tree dictionary, Persistences dictionary, Persistence diagram)
     """
     #Add points from the bottom up
@@ -122,14 +123,15 @@ def mergeTreeFrom1DTimeSeries(x):
             #Change the representative for this class to be the
             #saddle point
             UFR[oldestNeighb] = i
-    #Add the essential class
-    idx1 = np.argmin(x)
-    idx2 = np.argmax(x)
-    [b, d] = [x[idx1], x[idx2]]
-    I.append([b, d])
+    if essentialClass:
+        #Add the essential class
+        idx1 = np.argmin(x)
+        idx2 = np.argmax(x)
+        [b, d] = [x[idx1], x[idx2]]
+        I.append([b, d])
+        PS[idx1] = d-b
+        PS[idx2] = d-b
     I = np.array(I)
-    PS[idx1] = d-b
-    PS[idx2] = d-b
     return (MT, PS, I)
 
 if __name__ == '__main__':
