@@ -103,8 +103,7 @@ if __name__ == '__main__':
             pers = pers[pers <= maxPers]
         AllPersistences[i] = np.sum(pers)
     
-    #Now re-sort the signals by the Fiedler vector of the graph
-    #Laplacian built over Euclidean distance between the histograms
+    #Now re-sort the signals by their total persistence
     plt.clf()
     plotres=10
     plt.figure(figsize=(plotres, plotres*len(scores)/3))
