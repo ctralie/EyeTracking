@@ -87,11 +87,10 @@ if __name__ == '__main__':
         plt.savefig("AllTrajectories_FilledIn.svg", bbox_inches = 'tight')
     (Xs, scores) = getAllTrajectories(medk, doFillNaNs = False, trange = [3800, 4600])
 
-    #Compute persistence diagrams and sum over persistence images
+    #Compute total persistence for merge and join trees
     AllPersistences = np.zeros(len(scores))
-    #Maximum persistence to consider (if -1, consider all persistences)
+    #Maximum persistence to include in the sum (if -1, consider all persistences)
     maxPers = -1
-    res = 0.1 #Resolution of persistence image
     for i, x in enumerate(Xs):
         print("Computing DGM %i..."%i)
         #Sum persistences going up and down
